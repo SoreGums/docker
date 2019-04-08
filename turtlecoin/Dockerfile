@@ -1,14 +1,20 @@
+# build development the default
+
 # docker build \
 # -t soregums/turtlecoin:turtlecoind-v0.14.0-RC1 \
-# --build-arg GIT_REPO=turtlecoin \
+# .
+
+# OR build a tag
+
+# docker build \
+# -t soregums/turtlecoin:turtlecoind-v0.14.0-RC1 \
 # --build-arg GIT_BRANCH=v0.14.0-RC1 \
 # .
 
-# OR
+# OR build a specific commit
 
 # docker build \
 # -t soregums/turtlecoin:turtlecoind-1829c1 \
-# --build-arg GIT_REPO=turtlecoin \
 # --build-arg GIT_COMMIT=1829c1713f79207906c63f3f2dd989a939054d83 \
 # .
 
@@ -33,7 +39,7 @@ FROM builder as turtlecoin
 ARG FORCE_UPDATE=no
 ARG GIT_REPO_BASE_URL=https://github.com/turtlecoin/
 ARG GIT_REPO=turtlecoin
-ARG GIT_BRANCH=master
+ARG GIT_BRANCH=development
 ARG GIT_COMMIT
 ARG CMAKE_OPTS="-DCMAKE_BUILD_TYPE=Release -DSTATIC=true"
 
