@@ -54,7 +54,7 @@ CMD ["bash"]
 
 FROM soregums/debian:buster-slim as daemon
 
-COPY --from=turtlecoin /turtlecoin/build/src/TurtleCoind /bin/TurtleCoind
+COPY --from=turtlecoin /turtlecoin/build/src/TurtleCoind /usr/local/bin/TurtleCoind
 
 VOLUME /logs
 VOLUME /data
@@ -64,23 +64,48 @@ EXPOSE 11897/tcp
 # RPC
 EXPOSE 11898/tcp
 
-ENTRYPOINT ["rm","/data/p2pstate.bin",";","TurtleCoind"]
-CMD ["--no-console", "--log-file", "/logs/TurtleCoind.log", "--data-dir", "/data"]
+COPY ./docker-entrypoint.sh /usr/local/bin/
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["TurtleCoind", "--no-console", "--log-file", "/logs/TurtleCoind.log", "--data-dir", "/data", "--rpc-bind-ip", "0.0.0.0"]
 
-# docker run --name trtl-v0.14.0-RC1-11810 \
-# -p 0.0.0.0:11810:11897 \
-# -p 0.0.0.0:11811:11897 \
-# -d \
-# --mount type=bind,source="$(pwd)"/trtl-v0.14.0-RC1-11810/logs,target=/logs \
-# --mount type=bind,source="$(pwd)"/trtl-v0.14.0-RC1-11810/data,target=/data \
-# soregums/turtlecoin:turtlecoind-v0.14.0-RC1 
+# # rpc exposed
+# mkdir -p ./trtl-v0.14.0-RC1/{data,logs} && docker run --name trtl-v0.14.0-RC1 \
+#  -p 0.0.0.0:11897:11897 \
+#  -p 0.0.0.0:11898:11898 \
+#  -d \
+#  --mount type=bind,source="$(pwd)"/trtl-v0.14.0-RC1/logs,target=/logs \
+#  --mount type=bind,source="$(pwd)"/trtl-v0.14.0-RC1/data,target=/data \
+#  --restart=unless-stopped \
+#  soregums/turtlecoin:turtlecoind-v0.14.0-RC1
+
+# # no rpc exposed
+# mkdir -p ./trtl-v0.14.0-RC1/{data,logs} && docker run --name trtl-v0.14.0-RC1 \
+#  -p 0.0.0.0:11897:11897 \
+#  -d \
+#  --mount type=bind,source="$(pwd)"/trtl-v0.14.0-RC1/logs,target=/logs \
+#  --mount type=bind,source="$(pwd)"/trtl-v0.14.0-RC1/data,target=/data \
+#  --restart=unless-stopped \
+#  soregums/turtlecoin:turtlecoind-v0.14.0-RC1
 
 # OR
 
-# docker run --name trtl-1829c1-11810 \
-#  -p 0.0.0.0:11810:11897 \
-#  -p 0.0.0.0:11811:11897 \
+# # rpc exposed & load checkpoints
+# mkdir -p ./trtl-v0.14.0-RC1/{data,logs} && docker run --name trtl-v0.14.0-RC1 \
+#   -p 0.0.0.0:11897:11897 \
+#   -p 0.0.0.0:11898:11898 \
+#   -d \
+#   --mount type=bind,source="$(pwd)"/trtl-v0.14.0-RC1/logs,target=/logs \
+#   --mount type=bind,source="$(pwd)"/trtl-v0.14.0-RC1/data,target=/data \
+#   --restart=unless-stopped \
+#   soregums/turtlecoin:turtlecoind-v0.14.0-RC1 TurtleCoind --no-console --log-file /logs/TurtleCoind.log --data-dir /data  --rpc-bind-ip 0.0.0.0 --load-checkpoints /data/checkpoints.csv
+
+# OR
+
+# mkdir -p ./trtl-1829c1/{data,logs} && docker run --name trtl-1829c1 \
+#  -p 0.0.0.0:11897:11897 \
+#  -p 0.0.0.0:11898:11898 \
 #  -d \
-#  --mount type=bind,source="$(pwd)"/trtl-1829c1-11810/logs,target=/logs \
-#  --mount type=bind,source="$(pwd)"/trtl-1829c1-11810/data,target=/data \
+#  --mount type=bind,source="$(pwd)"/trtl-1829c1/logs,target=/logs \
+#  --mount type=bind,source="$(pwd)"/trtl-1829c1/data,target=/data \
+#  --restart=unless-stopped \
 #  soregums/turtlecoin:turtlecoind-1829c1 \
