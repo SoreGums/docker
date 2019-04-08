@@ -65,6 +65,7 @@ EXPOSE 11897/tcp
 EXPOSE 11898/tcp
 
 COPY ./docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["TurtleCoind", "--no-console", "--log-file", "/logs/TurtleCoind.log", "--data-dir", "/data", "--rpc-bind-ip", "0.0.0.0"]
 
