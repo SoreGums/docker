@@ -1,7 +1,7 @@
 # build development the default
 
 # docker build \
-# -t soregums/turtlecoin:turtlecoind-v0.14.0-RC1 \
+# -t soregums/turtlecoin:turtlecoind-dev \
 # .
 
 # OR build a tag
